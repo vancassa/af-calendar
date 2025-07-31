@@ -197,6 +197,7 @@ function SessionCalendar({
   sessionTitle: string
   showBlockedTime: boolean
 }) {
+  const [selectedActivity, setSelectedActivity] = useState<ClassActivity | null>(null)
   const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
   if (timeSlots.length === 0) {
@@ -271,15 +272,25 @@ function SessionCalendar({
                           )}
                           <div className={`space-y-1 md:space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
                             {slot.classes[day]?.map((activity, actIndex) => (
-                              <div key={actIndex} className="space-y-1">
+                              <div key={actIndex} className="space-y-1 relative">
                                 <Badge
                                   variant="outline"
-                                  className={`text-xs px-1 md:px-2 py-1 md:py-1.5 block text-center leading-tight flex items-center justify-center min-h-[20px] md:min-h-[24px] ${
+                                  className={`text-xs px-1 md:px-2 py-1 md:py-1.5 block text-center leading-tight flex items-center justify-center min-h-[20px] md:min-h-[24px] cursor-pointer hover:opacity-80 transition-opacity ${
                                     locationColors[activity.location]
                                   }`}
+                                  onClick={() => setSelectedActivity(activity)}
                                 >
                                   <span className="truncate">{activity.className}</span>
                                 </Badge>
+
+                                {/* Tooltip */}
+                                {selectedActivity === activity && (
+                                  <div className="absolute z-50 bg-black text-white text-xs rounded-md px-2 py-1 shadow-lg -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                    📍 {activity.location}
+                                    {/* Arrow */}
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -292,6 +303,9 @@ function SessionCalendar({
             </div>
           </div>
         </div>
+
+        {/* Click outside to close tooltip */}
+        {selectedActivity && <div className="fixed inset-0 z-40" onClick={() => setSelectedActivity(null)} />}
       </CardContent>
     </Card>
   )
