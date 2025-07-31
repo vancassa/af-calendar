@@ -154,10 +154,22 @@ const locationColors: { [key: string]: string } = {
 }
 
 const blockedTimeSlots = {
-  Monday: [{ start: "18.00", end: "22.00" }, { start: "09.00", end: "11.00" }],
-  Tuesday: [{ start: "06.30", end: "07.30" }, { start: "09.00", end: "11.00" }],
-  Wednesday: [{ start: "19.30", end: "22.00" }, { start: "09.00", end: "11.00" }],
-  Thursday: [{ start: "18.00", end: "22.00" }, { start: "09.00", end: "11.00" }],
+  Monday: [
+    { start: "18.00", end: "22.00" },
+    { start: "09.00", end: "11.00" },
+  ],
+  Tuesday: [
+    { start: "06.30", end: "07.30" },
+    { start: "09.00", end: "11.00" },
+  ],
+  Wednesday: [
+    { start: "19.30", end: "22.00" },
+    { start: "09.00", end: "11.00" },
+  ],
+  Thursday: [
+    { start: "18.00", end: "22.00" },
+    { start: "09.00", end: "11.00" },
+  ],
   Friday: [
     { start: "07.00", end: "08.30" },
     { start: "09.00", end: "11.00" },
@@ -232,7 +244,7 @@ function SessionCalendar({
                     return (
                       <div
                         key={day}
-                        className={`p-2 border rounded-lg relative ${
+                        className={`p-2 border rounded-lg relative flex flex-col justify-start ${
                           isBlocked ? "bg-red-50 border-red-200" : "bg-white"
                         }`}
                       >
@@ -241,16 +253,15 @@ function SessionCalendar({
                             <div className="text-red-600 font-semibold text-xs transform -rotate-12">BLOCKED</div>
                           </div>
                         )}
-                        <div className={`space-y-1 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
+                        <div className={`space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
                           {slot.classes[day]?.map((activity, actIndex) => (
                             <div key={actIndex} className="space-y-1">
                               <Badge
                                 variant="outline"
-                                className={`text-xs px-2 py-1 block text-center ${locationColors[activity.location]}`}
+                                className={`text-xs px-2 py-1.5 block text-center leading-tight flex items-center justify-center min-h-[24px] ${locationColors[activity.location]}`}
                               >
                                 {activity.className}
                               </Badge>
-                              {/* <div className="text-xs text-gray-500 text-center">@{activity.location}</div> */}
                             </div>
                           ))}
                         </div>
@@ -283,7 +294,7 @@ export default function ClassCalendar() {
     try {
       const canvas = await html2canvas(calendarElement, {
         backgroundColor: "#ffffff",
-        scale: 2, // Higher resolution
+        scale: 4, // Higher resolution
         useCORS: true,
         allowTaint: true,
       })
@@ -309,6 +320,31 @@ export default function ClassCalendar() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+      {/* Controls outside of the downloadable container */}
+      <div className="flex justify-center items-center gap-6 mb-6">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showBlockedTime}
+            onChange={(e) => setShowBlockedTime(e.target.checked)}
+            className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500"
+          />
+          <span className="text-sm font-medium text-gray-700">Show blocked time</span>
+        </label>
+
+        <Button onClick={downloadAsImage} className="flex items-center gap-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          Download as Image
+        </Button>
+      </div>
+
       <div id="calendar-container">
         {/* Main Header */}
         <Card className="mb-6">
@@ -321,30 +357,6 @@ export default function ClassCalendar() {
                 <Badge className={locationColors.Sedayu}>Sedayu</Badge>
                 <Badge className={locationColors.SunterMall}>SunterMall</Badge>
               </div>
-            </div>
-            <div className="flex justify-center mt-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showBlockedTime}
-                  onChange={(e) => setShowBlockedTime(e.target.checked)}
-                  className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500"
-                />
-                <span className="text-sm font-medium text-gray-700">Show blocked time</span>
-              </label>
-            </div>
-            <div className="flex justify-center mt-4">
-              <Button onClick={downloadAsImage} className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                Download as Image
-              </Button>
             </div>
           </CardHeader>
         </Card>
