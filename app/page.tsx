@@ -88,13 +88,16 @@ function parseCSV(csvString: string, location: string): ClassActivity[] {
   return activities
 }
 
-function consolidateData(): { morning: TimeSlot[]; evening: TimeSlot[] } {
+function consolidateData(selectedLocation?: string): { morning: TimeSlot[]; evening: TimeSlot[] } {
   const allActivities: ClassActivity[] = []
 
   // Parse all CSV data
   Object.entries(csvData).forEach(([location, csv]) => {
-    const activities = parseCSV(csv, location)
-    allActivities.push(...activities)
+    // Filter by selected location if provided
+    if (!selectedLocation || location === selectedLocation) {
+      const activities = parseCSV(csv, location)
+      allActivities.push(...activities)
+    }
   })
 
   // Group by time
@@ -314,16 +317,31 @@ function SessionCalendar({
 export default function ClassCalendar() {
   const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] })
   const [showBlockedTime, setShowBlockedTime] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
 
   useEffect(() => {
-    const consolidated = consolidateData()
+    const consolidated = consolidateData(selectedLocation || undefined)
     setSessions(consolidated)
-  }, [])
+  }, [selectedLocation])
+
+  const handleLocationFilter = (location: string) => {
+    if (selectedLocation === location) {
+      // If clicking the same location, clear the filter
+      setSelectedLocation(null)
+    } else {
+      // Set the new location filter
+      setSelectedLocation(location)
+    }
+  }
+
+  const clearFilter = () => {
+    setSelectedLocation(null)
+  }
 
   return (
     <div className="p-3 md:p-6 max-w-7xl mx-auto">
       {/* Controls outside of the downloadable container */}
-      <div className="flex justify-center items-center gap-4 md:gap-6 mb-4 md:mb-6">
+      <div className="flex flex-col items-center gap-4 md:gap-6 mb-4 md:mb-6">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -333,6 +351,17 @@ export default function ClassCalendar() {
           />
           <span className="text-sm font-medium text-gray-700">Show blocked time</span>
         </label>
+
+        {/* Filter status */}
+        {selectedLocation && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Showing only:</span>
+            <Badge className={`text-xs ${locationColors[selectedLocation]}`}>{selectedLocation}</Badge>
+            <button onClick={clearFilter} className="text-xs text-blue-600 hover:text-blue-800 underline">
+              Show all locations
+            </button>
+          </div>
+        )}
       </div>
 
       <div id="calendar-container">
@@ -344,10 +373,38 @@ export default function ClassCalendar() {
             </CardTitle>
             <div className="flex justify-center mt-3 md:mt-4">
               <div className="flex flex-wrap items-center justify-center gap-2">
-                <Badge className={`text-xs ${locationColors.MOI}`}>MOI</Badge>
-                <Badge className={`text-xs ${locationColors.BellaTerra}`}>BellaTerra</Badge>
-                <Badge className={`text-xs ${locationColors.Sedayu}`}>Sedayu</Badge>
-                <Badge className={`text-xs ${locationColors.SunterMall}`}>SunterMall</Badge>
+                <Badge
+                  className={`text-xs cursor-pointer hover:opacity-80 transition-opacity ${locationColors.MOI} ${
+                    selectedLocation === "MOI" ? "ring-2 ring-blue-500" : ""
+                  }`}
+                  onClick={() => handleLocationFilter("MOI")}
+                >
+                  MOI
+                </Badge>
+                <Badge
+                  className={`text-xs cursor-pointer hover:opacity-80 transition-opacity ${locationColors.BellaTerra} ${
+                    selectedLocation === "BellaTerra" ? "ring-2 ring-green-500" : ""
+                  }`}
+                  onClick={() => handleLocationFilter("BellaTerra")}
+                >
+                  BellaTerra
+                </Badge>
+                <Badge
+                  className={`text-xs cursor-pointer hover:opacity-80 transition-opacity ${locationColors.Sedayu} ${
+                    selectedLocation === "Sedayu" ? "ring-2 ring-purple-500" : ""
+                  }`}
+                  onClick={() => handleLocationFilter("Sedayu")}
+                >
+                  Sedayu
+                </Badge>
+                <Badge
+                  className={`text-xs cursor-pointer hover:opacity-80 transition-opacity ${locationColors.SunterMall} ${
+                    selectedLocation === "SunterMall" ? "ring-2 ring-orange-500" : ""
+                  }`}
+                  onClick={() => handleLocationFilter("SunterMall")}
+                >
+                  SunterMall
+                </Badge>
               </div>
             </div>
           </CardHeader>
