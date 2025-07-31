@@ -1,10 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import html2canvas from "html2canvas"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // Sample CSV data for demonstration
 const csvData = {
@@ -19,15 +17,15 @@ const csvData = {
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 06.30,,,Basic Yoga,,,,
 07.00,Body Combat,Hatha Yoga,,Body Pump,Pilates,,
-08.00,,,,,,Body Pump,
+08.00,,Tabata,,Bootcamp,,Body Pump,
 18.00,Zumba,Dance,Body Combat,Pilates,Body Combat,,
-19.00,Body Pump,Basic Yoga,Zumba,Bolly,Pound,,
+19.00,Body Pump,Basic Yoga,Zumba,,Pound,,
 20.00,,Cardio,,,Vinyasa Yoga,,`,
 
   Sedayu: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 08.00,Hatha Yoga,Body Combat,Vinyasa Yoga,Body Pump,Yoga Asanas,,
 10.00,,,,,,Bootcamp,AF Ignite
-09.00,Pilates,,,,,Booty & Abs,Fast Fit
+17.00,,,,,,Booty & Abs,Fast Fit
 18.15,BollyX,Pound Fit,Latin Dance,Barre Intensity,Zumba,,
 19.15,Kpop,Matt Pilates,Step Aerobic,BollyX,,,
 19.30,,,,,Body Pump,,`,
@@ -38,26 +36,26 @@ const csvData = {
 18.00,Pound Fit,Aerobic,,Aerobic,,,
 19.05,Body Pump,Pilates,Body Combat,Dance Fitness,Yoga,Zumba,
 20.10,Yoga Stretch,Zumba,,Yoga,Body Combat,,`,
-}
+};
 
 interface ClassActivity {
-  time: string
-  day: string
-  className: string
-  location: string
+  time: string;
+  day: string;
+  className: string;
+  location: string;
 }
 
 interface TimeSlot {
-  time: string
+  time: string;
   classes: {
-    [key: string]: ClassActivity[]
-  }
+    [key: string]: ClassActivity[];
+  };
 }
 
 function parseCSV(csvString: string, location: string): ClassActivity[] {
-  const lines = csvString.trim().split("\n")
-  const headers = lines[0].split(",")
-  const activities: ClassActivity[] = []
+  const lines = csvString.trim().split("\n");
+  const headers = lines[0].split(",");
+  const activities: ClassActivity[] = [];
 
   const dayMap: { [key: string]: string } = {
     Mon: "Monday",
@@ -67,40 +65,40 @@ function parseCSV(csvString: string, location: string): ClassActivity[] {
     Fri: "Friday",
     Sat: "Saturday",
     Sun: "Sunday",
-  }
+  };
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(",")
-    const time = values[0]
+    const values = lines[i].split(",");
+    const time = values[0];
 
     for (let j = 1; j < values.length && j < headers.length; j++) {
-      const className = values[j]?.trim()
+      const className = values[j]?.trim();
       if (className) {
-        const day = dayMap[headers[j]] || headers[j]
+        const day = dayMap[headers[j]] || headers[j];
         activities.push({
           time,
           day,
           className,
           location,
-        })
+        });
       }
     }
   }
 
-  return activities
+  return activities;
 }
 
 function consolidateData(): { morning: TimeSlot[]; evening: TimeSlot[] } {
-  const allActivities: ClassActivity[] = []
+  const allActivities: ClassActivity[] = [];
 
   // Parse all CSV data
   Object.entries(csvData).forEach(([location, csv]) => {
-    const activities = parseCSV(csv, location)
-    allActivities.push(...activities)
-  })
+    const activities = parseCSV(csv, location);
+    allActivities.push(...activities);
+  });
 
   // Group by time
-  const timeSlots: { [key: string]: TimeSlot } = {}
+  const timeSlots: { [key: string]: TimeSlot } = {};
 
   allActivities.forEach((activity) => {
     if (!timeSlots[activity.time]) {
@@ -115,35 +113,35 @@ function consolidateData(): { morning: TimeSlot[]; evening: TimeSlot[] } {
           Saturday: [],
           Sunday: [],
         },
-      }
+      };
     }
 
     if (timeSlots[activity.time].classes[activity.day]) {
-      timeSlots[activity.time].classes[activity.day].push(activity)
+      timeSlots[activity.time].classes[activity.day].push(activity);
     }
-  })
+  });
 
   // Sort by time
   const sortedTimes = Object.keys(timeSlots).sort((a, b) => {
-    const timeA = Number.parseFloat(a.replace(".", ""))
-    const timeB = Number.parseFloat(b.replace(".", ""))
-    return timeA - timeB
-  })
+    const timeA = Number.parseFloat(a.replace(".", ""));
+    const timeB = Number.parseFloat(b.replace(".", ""));
+    return timeA - timeB;
+  });
 
-  const allTimeSlots = sortedTimes.map((time) => timeSlots[time])
+  const allTimeSlots = sortedTimes.map((time) => timeSlots[time]);
 
   // Separate morning and evening sessions
   const morning = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time)
-    return timeNum < 12.0 // Before 12 PM (noon)
-  })
+    const timeNum = Number.parseFloat(slot.time);
+    return timeNum < 12.0; // Before 12 PM (noon)
+  });
 
   const evening = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time)
-    return timeNum >= 18.0 // 6 PM and after
-  })
+    const timeNum = Number.parseFloat(slot.time);
+    return timeNum >= 17.0; // 5 PM and after
+  });
 
-  return { morning, evening }
+  return { morning, evening };
 }
 
 const locationColors: { [key: string]: string } = {
@@ -151,7 +149,7 @@ const locationColors: { [key: string]: string } = {
   BellaTerra: "bg-green-100 text-green-800 border-green-200",
   Sedayu: "bg-purple-100 text-purple-800 border-purple-200",
   SunterMall: "bg-orange-100 text-orange-800 border-orange-200",
-}
+};
 
 const blockedTimeSlots = {
   Monday: [
@@ -175,19 +173,19 @@ const blockedTimeSlots = {
     { start: "09.00", end: "11.00" },
     { start: "17.00", end: "20.00" },
   ],
-}
+};
 
 function isTimeBlocked(time: string, day: string): boolean {
-  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false
+  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false;
 
-  const timeNum = Number.parseFloat(time.replace(".", ""))
-  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots]
+  const timeNum = Number.parseFloat(time.replace(".", ""));
+  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots];
 
   return blocks.some((block) => {
-    const startNum = Number.parseFloat(block.start.replace(".", ""))
-    const endNum = Number.parseFloat(block.end.replace(".", ""))
-    return timeNum >= startNum && timeNum <= endNum
-  })
+    const startNum = Number.parseFloat(block.start.replace(".", ""));
+    const endNum = Number.parseFloat(block.end.replace(".", ""));
+    return timeNum >= startNum && timeNum <= endNum;
+  });
 }
 
 function SessionCalendar({
@@ -195,11 +193,11 @@ function SessionCalendar({
   sessionTitle,
   showBlockedTime,
 }: {
-  timeSlots: TimeSlot[]
-  sessionTitle: string
-  showBlockedTime: boolean
+  timeSlots: TimeSlot[];
+  sessionTitle: string;
+  showBlockedTime: boolean;
 }) {
-  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   if (timeSlots.length === 0) {
     return (
@@ -210,7 +208,7 @@ function SessionCalendar({
           </CardTitle>
         </CardHeader>
       </Card>
-    )
+    );
   }
 
   return (
@@ -240,7 +238,7 @@ function SessionCalendar({
 
                   {/* Day columns */}
                   {weekdays.map((day) => {
-                    const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day)
+                    const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day);
                     return (
                       <div
                         key={day}
@@ -249,16 +247,16 @@ function SessionCalendar({
                         }`}
                       >
                         {isBlocked && (
-                          <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg flex items-center justify-center">
-                            <div className="text-red-600 font-semibold text-xs transform -rotate-12">BLOCKED</div>
-                          </div>
+                          <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg flex items-center justify-center"></div>
                         )}
                         <div className={`space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
                           {slot.classes[day]?.map((activity, actIndex) => (
                             <div key={actIndex} className="space-y-1">
                               <Badge
                                 variant="outline"
-                                className={`text-xs px-2 py-1.5 block text-center leading-tight flex items-center justify-center min-h-[24px] ${locationColors[activity.location]}`}
+                                className={`text-xs px-2 py-1.5 block text-center leading-tight flex items-center justify-center min-h-[24px] ${
+                                  locationColors[activity.location]
+                                }`}
                               >
                                 {activity.className}
                               </Badge>
@@ -266,7 +264,7 @@ function SessionCalendar({
                           ))}
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               ))}
@@ -275,48 +273,17 @@ function SessionCalendar({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function ClassCalendar() {
-  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] })
-  const [showBlockedTime, setShowBlockedTime] = useState(false)
+  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] });
+  const [showBlockedTime, setShowBlockedTime] = useState(false);
 
   useEffect(() => {
-    const consolidated = consolidateData()
-    setSessions(consolidated)
-  }, [])
-
-  const downloadAsImage = async () => {
-    const calendarElement = document.getElementById("calendar-container")
-    if (!calendarElement) return
-
-    try {
-      const canvas = await html2canvas(calendarElement, {
-        backgroundColor: "#ffffff",
-        scale: 4, // Higher resolution
-        useCORS: true,
-        allowTaint: true,
-      })
-
-      // Convert canvas to blob
-      canvas.toBlob((blob) => {
-        if (!blob) return
-
-        // Create download link
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = `class-schedule-${new Date().toISOString().split("T")[0]}.png`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-      }, "image/png")
-    } catch (error) {
-      console.error("Error generating image:", error)
-    }
-  }
+    const consolidated = consolidateData();
+    setSessions(consolidated);
+  }, []);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -331,25 +298,16 @@ export default function ClassCalendar() {
           />
           <span className="text-sm font-medium text-gray-700">Show blocked time</span>
         </label>
-
-        <Button onClick={downloadAsImage} className="flex items-center gap-2">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          Download as Image
-        </Button>
       </div>
 
       <div id="calendar-container">
         {/* Main Header */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center">Weekly Class Schedule</CardTitle>
+            {/* Add month */}
+            <CardTitle className="text-3xl font-bold text-center">
+              Class Schedule {new Date().toLocaleString("default", { month: "long", year: "numeric" })}
+            </CardTitle>
             <div className="flex justify-center gap-4 mt-4">
               <div className="flex items-center gap-2">
                 <Badge className={locationColors.MOI}>MOI</Badge>
@@ -371,10 +329,10 @@ export default function ClassCalendar() {
         {/* Evening Session */}
         <SessionCalendar
           timeSlots={sessions.evening}
-          sessionTitle="Evening Session (6:00 PM & After)"
+          sessionTitle="Evening Session (5:00 PM & After)"
           showBlockedTime={showBlockedTime}
         />
       </div>
     </div>
-  )
+  );
 }
