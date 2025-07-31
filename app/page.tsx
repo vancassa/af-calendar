@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 // Sample CSV data for demonstration
 const csvData = {
@@ -36,26 +36,26 @@ const csvData = {
 18.00,Pound Fit,Aerobic,,Aerobic,,,
 19.05,Body Pump,Pilates,Body Combat,Dance Fitness,Yoga,Zumba,
 20.10,Yoga Stretch,Zumba,,Yoga,Body Combat,,`,
-};
+}
 
 interface ClassActivity {
-  time: string;
-  day: string;
-  className: string;
-  location: string;
+  time: string
+  day: string
+  className: string
+  location: string
 }
 
 interface TimeSlot {
-  time: string;
+  time: string
   classes: {
-    [key: string]: ClassActivity[];
-  };
+    [key: string]: ClassActivity[]
+  }
 }
 
 function parseCSV(csvString: string, location: string): ClassActivity[] {
-  const lines = csvString.trim().split("\n");
-  const headers = lines[0].split(",");
-  const activities: ClassActivity[] = [];
+  const lines = csvString.trim().split("\n")
+  const headers = lines[0].split(",")
+  const activities: ClassActivity[] = []
 
   const dayMap: { [key: string]: string } = {
     Mon: "Monday",
@@ -65,40 +65,40 @@ function parseCSV(csvString: string, location: string): ClassActivity[] {
     Fri: "Friday",
     Sat: "Saturday",
     Sun: "Sunday",
-  };
+  }
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(",");
-    const time = values[0];
+    const values = lines[i].split(",")
+    const time = values[0]
 
     for (let j = 1; j < values.length && j < headers.length; j++) {
-      const className = values[j]?.trim();
+      const className = values[j]?.trim()
       if (className) {
-        const day = dayMap[headers[j]] || headers[j];
+        const day = dayMap[headers[j]] || headers[j]
         activities.push({
           time,
           day,
           className,
           location,
-        });
+        })
       }
     }
   }
 
-  return activities;
+  return activities
 }
 
 function consolidateData(): { morning: TimeSlot[]; evening: TimeSlot[] } {
-  const allActivities: ClassActivity[] = [];
+  const allActivities: ClassActivity[] = []
 
   // Parse all CSV data
   Object.entries(csvData).forEach(([location, csv]) => {
-    const activities = parseCSV(csv, location);
-    allActivities.push(...activities);
-  });
+    const activities = parseCSV(csv, location)
+    allActivities.push(...activities)
+  })
 
   // Group by time
-  const timeSlots: { [key: string]: TimeSlot } = {};
+  const timeSlots: { [key: string]: TimeSlot } = {}
 
   allActivities.forEach((activity) => {
     if (!timeSlots[activity.time]) {
@@ -113,35 +113,35 @@ function consolidateData(): { morning: TimeSlot[]; evening: TimeSlot[] } {
           Saturday: [],
           Sunday: [],
         },
-      };
+      }
     }
 
     if (timeSlots[activity.time].classes[activity.day]) {
-      timeSlots[activity.time].classes[activity.day].push(activity);
+      timeSlots[activity.time].classes[activity.day].push(activity)
     }
-  });
+  })
 
   // Sort by time
   const sortedTimes = Object.keys(timeSlots).sort((a, b) => {
-    const timeA = Number.parseFloat(a.replace(".", ""));
-    const timeB = Number.parseFloat(b.replace(".", ""));
-    return timeA - timeB;
-  });
+    const timeA = Number.parseFloat(a.replace(".", ""))
+    const timeB = Number.parseFloat(b.replace(".", ""))
+    return timeA - timeB
+  })
 
-  const allTimeSlots = sortedTimes.map((time) => timeSlots[time]);
+  const allTimeSlots = sortedTimes.map((time) => timeSlots[time])
 
   // Separate morning and evening sessions
   const morning = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time);
-    return timeNum < 12.0; // Before 12 PM (noon)
-  });
+    const timeNum = Number.parseFloat(slot.time)
+    return timeNum < 12.0 // Before 12 PM (noon)
+  })
 
   const evening = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time);
-    return timeNum >= 17.0; // 5 PM and after
-  });
+    const timeNum = Number.parseFloat(slot.time)
+    return timeNum >= 17.0 // 5 PM and after
+  })
 
-  return { morning, evening };
+  return { morning, evening }
 }
 
 const locationColors: { [key: string]: string } = {
@@ -149,7 +149,7 @@ const locationColors: { [key: string]: string } = {
   BellaTerra: "bg-green-100 text-green-800 border-green-200",
   Sedayu: "bg-purple-100 text-purple-800 border-purple-200",
   SunterMall: "bg-orange-100 text-orange-800 border-orange-200",
-};
+}
 
 const blockedTimeSlots = {
   Monday: [
@@ -173,19 +173,19 @@ const blockedTimeSlots = {
     { start: "09.00", end: "11.00" },
     { start: "17.00", end: "20.00" },
   ],
-};
+}
 
 function isTimeBlocked(time: string, day: string): boolean {
-  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false;
+  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false
 
-  const timeNum = Number.parseFloat(time.replace(".", ""));
-  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots];
+  const timeNum = Number.parseFloat(time.replace(".", ""))
+  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots]
 
   return blocks.some((block) => {
-    const startNum = Number.parseFloat(block.start.replace(".", ""));
-    const endNum = Number.parseFloat(block.end.replace(".", ""));
-    return timeNum >= startNum && timeNum <= endNum;
-  });
+    const startNum = Number.parseFloat(block.start.replace(".", ""))
+    const endNum = Number.parseFloat(block.end.replace(".", ""))
+    return timeNum >= startNum && timeNum <= endNum
+  })
 }
 
 function SessionCalendar({
@@ -193,79 +193,100 @@ function SessionCalendar({
   sessionTitle,
   showBlockedTime,
 }: {
-  timeSlots: TimeSlot[];
-  sessionTitle: string;
-  showBlockedTime: boolean;
+  timeSlots: TimeSlot[]
+  sessionTitle: string
+  showBlockedTime: boolean
 }) {
-  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
   if (timeSlots.length === 0) {
     return (
-      <Card className="mb-6">
+      <Card className="mb-4 md:mb-6">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-center text-gray-500">
+          <CardTitle className="text-lg md:text-xl font-bold text-center text-gray-500">
             {sessionTitle} - No Classes Scheduled
           </CardTitle>
         </CardHeader>
       </Card>
-    );
+    )
   }
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-4 md:mb-6">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-center">{sessionTitle}</CardTitle>
+        <CardTitle className="text-lg md:text-xl font-bold text-center">{sessionTitle}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-2 md:p-6">
         <div className="overflow-x-auto">
-          <div className="min-w-full">
+          <div className="relative min-w-[800px] md:min-w-full">
             {/* Header */}
-            <div className="grid grid-cols-8 gap-2 mb-4">
-              <div className="font-semibold text-center p-3 bg-gray-100 rounded-lg">Time</div>
-              {weekdays.map((day) => (
-                <div key={day} className="font-semibold text-center p-3 bg-gray-100 rounded-lg">
-                  {day}
+            <div className="flex">
+              {/* Sticky Time Header */}
+              <div className="sticky left-0 z-20 bg-white">
+                <div className="font-semibold text-center p-2 md:p-3 bg-gray-100 rounded-lg text-xs md:text-sm w-16 md:w-20 border-r border-gray-200">
+                  Time
                 </div>
-              ))}
+              </div>
+
+              {/* Day Headers */}
+              <div className="flex flex-1 gap-1 md:gap-2 ml-1 md:ml-2">
+                {weekdays.map((day) => (
+                  <div
+                    key={day}
+                    className="font-semibold text-center p-2 md:p-3 bg-gray-100 rounded-lg text-xs md:text-sm flex-1 min-w-[80px] md:min-w-[100px]"
+                  >
+                    <span className="hidden sm:inline">{day}</span>
+                    <span className="sm:hidden">{day.slice(0, 3)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Time slots */}
-            <div className="space-y-2">
+            <div className="space-y-1 md:space-y-2 mt-2 md:mt-4">
               {timeSlots.map((slot, index) => (
-                <div key={index} className="grid grid-cols-8 gap-2">
-                  {/* Time column */}
-                  <div className="p-3 bg-gray-50 rounded-lg text-center font-mono text-sm font-medium">{slot.time}</div>
+                <div key={index} className="flex">
+                  {/* Sticky Time column */}
+                  <div className="sticky left-0 z-20 bg-white">
+                    <div className="p-2 md:p-3 bg-gray-50 rounded-lg text-center font-mono text-xs md:text-sm font-medium w-16 md:w-20 border-r border-gray-200">
+                      {slot.time}
+                    </div>
+                  </div>
 
                   {/* Day columns */}
-                  {weekdays.map((day) => {
-                    const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day);
-                    return (
-                      <div
-                        key={day}
-                        className={`p-2 border rounded-lg relative flex flex-col justify-start ${
-                          isBlocked ? "bg-red-50 border-red-200" : "bg-white"
-                        }`}
-                      >
-                        {isBlocked && (
-                          <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg flex items-center justify-center"></div>
-                        )}
-                        <div className={`space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
-                          {slot.classes[day]?.map((activity, actIndex) => (
-                            <div key={actIndex} className="space-y-1">
-                              <Badge
-                                variant="outline"
-                                className={`text-xs px-2 py-1.5 block text-center leading-tight flex items-center justify-center min-h-[24px] ${
-                                  locationColors[activity.location]
-                                }`}
-                              >
-                                {activity.className}
-                              </Badge>
+                  <div className="flex flex-1 gap-1 md:gap-2 ml-1 md:ml-2">
+                    {weekdays.map((day) => {
+                      const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day)
+                      return (
+                        <div
+                          key={day}
+                          className={`p-1 md:p-2 border rounded-lg relative flex flex-col justify-start flex-1 min-w-[80px] md:min-w-[100px] ${
+                            isBlocked ? "bg-red-50 border-red-200" : "bg-white"
+                          }`}
+                        >
+                          {isBlocked && (
+                            <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg flex items-center justify-center">
+                              <div className="text-red-600 font-semibold text-xs transform -rotate-12">BLOCKED</div>
                             </div>
-                          ))}
+                          )}
+                          <div className={`space-y-1 md:space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
+                            {slot.classes[day]?.map((activity, actIndex) => (
+                              <div key={actIndex} className="space-y-1">
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs px-1 md:px-2 py-1 md:py-1.5 block text-center leading-tight flex items-center justify-center min-h-[20px] md:min-h-[24px] ${
+                                    locationColors[activity.location]
+                                  }`}
+                                >
+                                  <span className="truncate">{activity.className}</span>
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
@@ -273,22 +294,22 @@ function SessionCalendar({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
 
 export default function ClassCalendar() {
-  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] });
-  const [showBlockedTime, setShowBlockedTime] = useState(false);
+  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] })
+  const [showBlockedTime, setShowBlockedTime] = useState(false)
 
   useEffect(() => {
-    const consolidated = consolidateData();
-    setSessions(consolidated);
-  }, []);
+    const consolidated = consolidateData()
+    setSessions(consolidated)
+  }, [])
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-3 md:p-6 max-w-7xl mx-auto">
       {/* Controls outside of the downloadable container */}
-      <div className="flex justify-center items-center gap-6 mb-6">
+      <div className="flex justify-center items-center gap-4 md:gap-6 mb-4 md:mb-6">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -302,18 +323,17 @@ export default function ClassCalendar() {
 
       <div id="calendar-container">
         {/* Main Header */}
-        <Card className="mb-6">
-          <CardHeader>
-            {/* Add month */}
-            <CardTitle className="text-3xl font-bold text-center">
+        <Card className="mb-4 md:mb-6">
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-xl md:text-3xl font-bold text-center">
               Class Schedule {new Date().toLocaleString("default", { month: "long", year: "numeric" })}
             </CardTitle>
-            <div className="flex justify-center gap-4 mt-4">
-              <div className="flex items-center gap-2">
-                <Badge className={locationColors.MOI}>MOI</Badge>
-                <Badge className={locationColors.BellaTerra}>BellaTerra</Badge>
-                <Badge className={locationColors.Sedayu}>Sedayu</Badge>
-                <Badge className={locationColors.SunterMall}>SunterMall</Badge>
+            <div className="flex justify-center mt-3 md:mt-4">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Badge className={`text-xs ${locationColors.MOI}`}>MOI</Badge>
+                <Badge className={`text-xs ${locationColors.BellaTerra}`}>BellaTerra</Badge>
+                <Badge className={`text-xs ${locationColors.Sedayu}`}>Sedayu</Badge>
+                <Badge className={`text-xs ${locationColors.SunterMall}`}>SunterMall</Badge>
               </div>
             </div>
           </CardHeader>
@@ -334,5 +354,5 @@ export default function ClassCalendar() {
         />
       </div>
     </div>
-  );
+  )
 }
