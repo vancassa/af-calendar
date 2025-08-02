@@ -1,17 +1,16 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 // Sample CSV data for demonstration
 const csvData = {
   MOI: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
-07.30,,Hatha Yoga,,,Hatha Yoga,Pilates,
-08.00,,,Zumba,Body Combat,,,BollyX
-09.00,Pilates,,,,,Body Combat,Body Jam
-18.00,,,,,AF Ignite,,
-18.30,Dance Cardio,Pilates,Kpop,Pound Fit,,,
+07.30,DanceArt,Yoga,,Body Combat,Yoga,,BollyX
+08.00,,,Zumba,,,DanceArt,
+09.00,PilatesX,,,,,Body Combat,Body Jam
+18.30,Dance Cardio,Pilates,Kpop,Pound Fit,Yoga,,
 19.30,Body Combat,Zumba,BollyX,Body Combat,Freestyle,,`,
 
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
@@ -36,26 +35,26 @@ const csvData = {
 18.00,Pound Fit,Aerobic,,Aerobic,,,
 19.05,Body Pump,Pilates,Body Combat,Dance Fitness,Yoga,Zumba,
 20.10,Yoga Stretch,Zumba,,Yoga,Body Combat,,`,
-}
+};
 
 interface ClassActivity {
-  time: string
-  day: string
-  className: string
-  location: string
+  time: string;
+  day: string;
+  className: string;
+  location: string;
 }
 
 interface TimeSlot {
-  time: string
+  time: string;
   classes: {
-    [key: string]: ClassActivity[]
-  }
+    [key: string]: ClassActivity[];
+  };
 }
 
 function parseCSV(csvString: string, location: string): ClassActivity[] {
-  const lines = csvString.trim().split("\n")
-  const headers = lines[0].split(",")
-  const activities: ClassActivity[] = []
+  const lines = csvString.trim().split("\n");
+  const headers = lines[0].split(",");
+  const activities: ClassActivity[] = [];
 
   const dayMap: { [key: string]: string } = {
     Mon: "Monday",
@@ -65,43 +64,43 @@ function parseCSV(csvString: string, location: string): ClassActivity[] {
     Fri: "Friday",
     Sat: "Saturday",
     Sun: "Sunday",
-  }
+  };
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(",")
-    const time = values[0]
+    const values = lines[i].split(",");
+    const time = values[0];
 
     for (let j = 1; j < values.length && j < headers.length; j++) {
-      const className = values[j]?.trim()
+      const className = values[j]?.trim();
       if (className) {
-        const day = dayMap[headers[j]] || headers[j]
+        const day = dayMap[headers[j]] || headers[j];
         activities.push({
           time,
           day,
           className,
           location,
-        })
+        });
       }
     }
   }
 
-  return activities
+  return activities;
 }
 
 function consolidateData(selectedLocation?: string): { morning: TimeSlot[]; evening: TimeSlot[] } {
-  const allActivities: ClassActivity[] = []
+  const allActivities: ClassActivity[] = [];
 
   // Parse all CSV data
   Object.entries(csvData).forEach(([location, csv]) => {
     // Filter by selected location if provided
     if (!selectedLocation || location === selectedLocation) {
-      const activities = parseCSV(csv, location)
-      allActivities.push(...activities)
+      const activities = parseCSV(csv, location);
+      allActivities.push(...activities);
     }
-  })
+  });
 
   // Group by time
-  const timeSlots: { [key: string]: TimeSlot } = {}
+  const timeSlots: { [key: string]: TimeSlot } = {};
 
   allActivities.forEach((activity) => {
     if (!timeSlots[activity.time]) {
@@ -116,35 +115,35 @@ function consolidateData(selectedLocation?: string): { morning: TimeSlot[]; even
           Saturday: [],
           Sunday: [],
         },
-      }
+      };
     }
 
     if (timeSlots[activity.time].classes[activity.day]) {
-      timeSlots[activity.time].classes[activity.day].push(activity)
+      timeSlots[activity.time].classes[activity.day].push(activity);
     }
-  })
+  });
 
   // Sort by time
   const sortedTimes = Object.keys(timeSlots).sort((a, b) => {
-    const timeA = Number.parseFloat(a.replace(".", ""))
-    const timeB = Number.parseFloat(b.replace(".", ""))
-    return timeA - timeB
-  })
+    const timeA = Number.parseFloat(a.replace(".", ""));
+    const timeB = Number.parseFloat(b.replace(".", ""));
+    return timeA - timeB;
+  });
 
-  const allTimeSlots = sortedTimes.map((time) => timeSlots[time])
+  const allTimeSlots = sortedTimes.map((time) => timeSlots[time]);
 
   // Separate morning and evening sessions
   const morning = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time)
-    return timeNum < 12.0 // Before 12 PM (noon)
-  })
+    const timeNum = Number.parseFloat(slot.time);
+    return timeNum < 12.0; // Before 12 PM (noon)
+  });
 
   const evening = allTimeSlots.filter((slot) => {
-    const timeNum = Number.parseFloat(slot.time)
-    return timeNum >= 17.0 // 5 PM and after
-  })
+    const timeNum = Number.parseFloat(slot.time);
+    return timeNum >= 17.0; // 5 PM and after
+  });
 
-  return { morning, evening }
+  return { morning, evening };
 }
 
 const locationColors: { [key: string]: string } = {
@@ -152,7 +151,7 @@ const locationColors: { [key: string]: string } = {
   BellaTerra: "bg-green-100 text-green-800 border-green-200",
   Sedayu: "bg-purple-100 text-purple-800 border-purple-200",
   SunterMall: "bg-orange-100 text-orange-800 border-orange-200",
-}
+};
 
 const blockedTimeSlots = {
   Monday: [
@@ -176,19 +175,19 @@ const blockedTimeSlots = {
     { start: "09.00", end: "11.00" },
     { start: "17.00", end: "20.00" },
   ],
-}
+};
 
 function isTimeBlocked(time: string, day: string): boolean {
-  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false
+  if (!blockedTimeSlots[day as keyof typeof blockedTimeSlots]) return false;
 
-  const timeNum = Number.parseFloat(time.replace(".", ""))
-  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots]
+  const timeNum = Number.parseFloat(time.replace(".", ""));
+  const blocks = blockedTimeSlots[day as keyof typeof blockedTimeSlots];
 
   return blocks.some((block) => {
-    const startNum = Number.parseFloat(block.start.replace(".", ""))
-    const endNum = Number.parseFloat(block.end.replace(".", ""))
-    return timeNum >= startNum && timeNum <= endNum
-  })
+    const startNum = Number.parseFloat(block.start.replace(".", ""));
+    const endNum = Number.parseFloat(block.end.replace(".", ""));
+    return timeNum >= startNum && timeNum <= endNum;
+  });
 }
 
 function SessionCalendar({
@@ -196,12 +195,12 @@ function SessionCalendar({
   sessionTitle,
   showBlockedTime,
 }: {
-  timeSlots: TimeSlot[]
-  sessionTitle: string
-  showBlockedTime: boolean
+  timeSlots: TimeSlot[];
+  sessionTitle: string;
+  showBlockedTime: boolean;
 }) {
-  const [selectedActivity, setSelectedActivity] = useState<ClassActivity | null>(null)
-  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+  const [selectedActivity, setSelectedActivity] = useState<ClassActivity | null>(null);
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
   if (timeSlots.length === 0) {
     return (
@@ -212,7 +211,7 @@ function SessionCalendar({
           </CardTitle>
         </CardHeader>
       </Card>
-    )
+    );
   }
 
   return (
@@ -260,7 +259,7 @@ function SessionCalendar({
                   {/* Day columns */}
                   <div className="flex flex-1 gap-1 md:gap-2 ml-1 md:ml-2">
                     {weekdays.map((day) => {
-                      const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day)
+                      const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day);
                       return (
                         <div
                           key={day}
@@ -298,7 +297,7 @@ function SessionCalendar({
                             ))}
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -311,32 +310,32 @@ function SessionCalendar({
         {selectedActivity && <div className="fixed inset-0 z-40" onClick={() => setSelectedActivity(null)} />}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function ClassCalendar() {
-  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] })
-  const [showBlockedTime, setShowBlockedTime] = useState(false)
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
+  const [sessions, setSessions] = useState<{ morning: TimeSlot[]; evening: TimeSlot[] }>({ morning: [], evening: [] });
+  const [showBlockedTime, setShowBlockedTime] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
   useEffect(() => {
-    const consolidated = consolidateData(selectedLocation || undefined)
-    setSessions(consolidated)
-  }, [selectedLocation])
+    const consolidated = consolidateData(selectedLocation || undefined);
+    setSessions(consolidated);
+  }, [selectedLocation]);
 
   const handleLocationFilter = (location: string) => {
     if (selectedLocation === location) {
       // If clicking the same location, clear the filter
-      setSelectedLocation(null)
+      setSelectedLocation(null);
     } else {
       // Set the new location filter
-      setSelectedLocation(location)
+      setSelectedLocation(location);
     }
-  }
+  };
 
   const clearFilter = () => {
-    setSelectedLocation(null)
-  }
+    setSelectedLocation(null);
+  };
 
   return (
     <div className="p-3 md:p-6 max-w-7xl mx-auto">
@@ -425,5 +424,5 @@ export default function ClassCalendar() {
         />
       </div>
     </div>
-  )
+  );
 }
