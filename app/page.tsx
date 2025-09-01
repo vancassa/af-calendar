@@ -7,27 +7,28 @@ import { Badge } from "@/components/ui/badge";
 // Sample CSV data for demonstration
 const csvData = {
   MOI: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
-07.30,DanceArt,Yoga,,Body Combat,Yoga,,BollyX
+07.30,,,,Body Combat,,,BollyX
 08.00,,,Zumba,,,DanceArt,
 09.00,PilatesX,,,,,Body Combat,Body Jam
+17.30,,,Yoga,DanceArt,,,
 18.30,Dance Cardio,Pilates,Kpop,Pound Fit,Yoga,,
-19.30,Body Combat,Zumba,BollyX,Body Combat,Freestyle,,`,
+19.30,Body Combat,Zumba,BollyX,Body Combat,AF Ignite,,`,
 
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 06.30,,,Basic Yoga,,,,
 07.00,Body Combat,Hatha Yoga,,Body Pump,Pilates,,
-08.00,,Tabata,,Bootcamp,,Body Pump,
+08.00,,,,,,Body Pump,Cardio boxing
 18.00,Zumba,Dance,Body Combat,Pilates,Body Combat,,
-19.00,Body Pump,Basic Yoga,Zumba,,Pound,,
-20.00,,Cardio,,,Vinyasa Yoga,,`,
+19.00,Body Pump,Basic Yoga,Zumba,Bootcamp,Pound,,
+20.00,,Cardio dance,,,Vinyasa Yoga,,`,
 
   Sedayu: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 08.00,Hatha Yoga,Body Combat,Vinyasa Yoga,Body Pump,Yoga Asanas,,
-10.00,,,,,,Bootcamp,AF Ignite
-17.00,,,,,,Booty & Abs,Fast Fit
-18.15,BollyX,Pound Fit,Latin Dance,Barre Intensity,Zumba,,
-19.15,Kpop,Matt Pilates,Step Aerobic,BollyX,,,
-19.30,,,,,Body Pump,,`,
+09.00,,Body Language,Bolly X,Pound,Aerobic,,
+09.30,DanceArt,,,,,Booty & Abs,Bootcamp
+17.00,,,,,,Bootcamp,Fast Fit
+18.15,Kpop,,Latin Dance,,Zumba,,
+19.30,Step Aerobic,Matt Pilates,Step Aerobic,Cardio boxing,Body Pump,,`,
 
   SunterMall: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 09.00,HIIT,,,,,,
