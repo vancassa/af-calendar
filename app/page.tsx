@@ -191,34 +191,106 @@ function isTimeBlocked(time: string, day: string): boolean {
   });
 }
 
-function SessionCalendar({
-  timeSlots,
-  sessionTitle,
+function CombinedSessionCalendar({
+  morningSlots,
+  eveningSlots,
   showBlockedTime,
 }: {
-  timeSlots: TimeSlot[];
-  sessionTitle: string;
+  morningSlots: TimeSlot[];
+  eveningSlots: TimeSlot[];
   showBlockedTime: boolean;
 }) {
   const [selectedActivity, setSelectedActivity] = useState<ClassActivity | null>(null);
   const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  if (timeSlots.length === 0) {
+  const allTimeSlots = [...morningSlots, ...eveningSlots];
+
+  if (allTimeSlots.length === 0) {
     return (
       <Card className="mb-4 md:mb-6">
         <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-bold text-center text-gray-500">
-            {sessionTitle} - No Classes Scheduled
-          </CardTitle>
+          <CardTitle className="text-lg md:text-xl font-bold text-center text-gray-500">No Classes Scheduled</CardTitle>
         </CardHeader>
       </Card>
     );
   }
 
+  const renderTimeSlots = (slots: TimeSlot[], isEvening = false) => {
+    if (slots.length === 0) return null;
+
+    return (
+      <>
+        {isEvening && (
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-4 text-gray-500 font-medium">Evening Session</span>
+            </div>
+          </div>
+        )}
+        {slots.map((slot, index) => (
+          <div key={`${isEvening ? "evening" : "morning"}-${index}`} className="flex">
+            {/* Sticky Time column */}
+            <div className="sticky left-0 z-20 bg-white">
+              <div className="p-2 md:p-3 bg-gray-50 rounded-lg text-center font-mono text-xs md:text-sm font-medium w-16 md:w-20 border-r border-gray-200">
+                {slot.time}
+              </div>
+            </div>
+
+            {/* Day columns */}
+            <div className="flex flex-1 gap-1 md:gap-2 ml-1 md:ml-2">
+              {weekdays.map((day) => {
+                const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day);
+                return (
+                  <div
+                    key={day}
+                    className={`p-1 md:p-2 border rounded-lg relative flex flex-col justify-start flex-1 min-w-[80px] md:min-w-[100px] ${
+                      isBlocked ? "bg-red-50 border-red-200" : "bg-white"
+                    }`}
+                  >
+                    {isBlocked && (
+                      <div className="absolute inset-0 bg-red-300 rounded-lg flex items-center justify-center z-[15]"></div>
+                    )}
+                    <div className={`space-y-1 md:space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
+                      {slot.classes[day]?.map((activity, actIndex) => (
+                        <div key={actIndex} className="space-y-1 relative">
+                          <Badge
+                            variant="outline"
+                            className={`text-xs px-1 md:px-2 py-1 md:py-1.5 block text-center leading-tight flex items-center justify-center min-h-[20px] md:min-h-[24px] cursor-pointer hover:opacity-80 transition-opacity ${
+                              locationColors[activity.location]
+                            }`}
+                            onClick={() => setSelectedActivity(activity)}
+                          >
+                            <span className="truncate">{activity.className}</span>
+                          </Badge>
+
+                          {/* Tooltip */}
+                          {selectedActivity === activity && (
+                            <div className="absolute z-50 bg-black text-white text-xs rounded-md px-2 py-1 shadow-lg -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                              📍 {activity.location}
+                              {/* Arrow */}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
   return (
     <Card className="mb-4 md:mb-6">
       <CardHeader>
-        <CardTitle className="text-lg md:text-xl font-bold text-center">{sessionTitle}</CardTitle>
+        <CardTitle className="text-lg md:text-xl font-bold text-center">Class Schedule</CardTitle>
       </CardHeader>
       <CardContent className="p-2 md:p-6">
         <div className="overflow-x-auto">
@@ -248,61 +320,8 @@ function SessionCalendar({
 
             {/* Time slots */}
             <div className="space-y-1 md:space-y-2 mt-2 md:mt-4">
-              {timeSlots.map((slot, index) => (
-                <div key={index} className="flex">
-                  {/* Sticky Time column */}
-                  <div className="sticky left-0 z-20 bg-white">
-                    <div className="p-2 md:p-3 bg-gray-50 rounded-lg text-center font-mono text-xs md:text-sm font-medium w-16 md:w-20 border-r border-gray-200">
-                      {slot.time}
-                    </div>
-                  </div>
-
-                  {/* Day columns */}
-                  <div className="flex flex-1 gap-1 md:gap-2 ml-1 md:ml-2">
-                    {weekdays.map((day) => {
-                      const isBlocked = showBlockedTime && isTimeBlocked(slot.time, day);
-                      return (
-                        <div
-                          key={day}
-                          className={`p-1 md:p-2 border rounded-lg relative flex flex-col justify-start flex-1 min-w-[80px] md:min-w-[100px] ${
-                            isBlocked ? "bg-red-50 border-red-200" : "bg-white"
-                          }`}
-                        >
-                          {isBlocked && (
-                            <div className="absolute inset-0 bg-red-100 opacity-50 rounded-lg flex items-center justify-center">
-                              <div className="text-red-600 font-semibold text-xs transform -rotate-12">BLOCKED</div>
-                            </div>
-                          )}
-                          <div className={`space-y-1 md:space-y-2 relative z-10 ${isBlocked ? "opacity-30" : ""}`}>
-                            {slot.classes[day]?.map((activity, actIndex) => (
-                              <div key={actIndex} className="space-y-1 relative">
-                                <Badge
-                                  variant="outline"
-                                  className={`text-xs px-1 md:px-2 py-1 md:py-1.5 block text-center leading-tight flex items-center justify-center min-h-[20px] md:min-h-[24px] cursor-pointer hover:opacity-80 transition-opacity ${
-                                    locationColors[activity.location]
-                                  }`}
-                                  onClick={() => setSelectedActivity(activity)}
-                                >
-                                  <span className="truncate">{activity.className}</span>
-                                </Badge>
-
-                                {/* Tooltip */}
-                                {selectedActivity === activity && (
-                                  <div className="absolute z-50 bg-black text-white text-xs rounded-md px-2 py-1 shadow-lg -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                                    📍 {activity.location}
-                                    {/* Arrow */}
-                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+              {renderTimeSlots(morningSlots, false)}
+              {renderTimeSlots(eveningSlots, true)}
             </div>
           </div>
         </div>
@@ -410,17 +429,10 @@ export default function ClassCalendar() {
           </CardHeader>
         </Card>
 
-        {/* Morning Session */}
-        <SessionCalendar
-          timeSlots={sessions.morning}
-          sessionTitle="Morning Session (Before 12:00 PM)"
-          showBlockedTime={showBlockedTime}
-        />
-
-        {/* Evening Session */}
-        <SessionCalendar
-          timeSlots={sessions.evening}
-          sessionTitle="Evening Session (5:00 PM & After)"
+        {/* Combined Sessions */}
+        <CombinedSessionCalendar
+          morningSlots={sessions.morning}
+          eveningSlots={sessions.evening}
           showBlockedTime={showBlockedTime}
         />
       </div>
