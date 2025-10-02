@@ -8,16 +8,18 @@ import { Badge } from "@/components/ui/badge";
 const csvData = {
   MOI: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 07.30,,,,Body Combat,,,BollyX
-08.00,,,Zumba,,,DanceArt,
-09.00,PilatesX,,,,,Body Combat,Body Jam
-17.30,,,Yoga,DanceArt,,,
-18.30,Dance Cardio,Pilates,Kpop,Pound Fit,Yoga,,
-19.30,Body Combat,Zumba,BollyX,Body Combat,AF Ignite,,`,
+08.30,,,Zumba,,,,
+09.00,PilatesX,AF Ignite,,,Yoga,,Body Jam
+09.30,,,,,,Body Combat,
+17.30,,,,DanceArt,,,
+18.30,Dance Cardio,Pilates,Yoga,Kpop,,,
+19.00,,,,,AF Ignite,,
+19.30,Body Combat,Zumba,BollyX,Body Combat,,,`,
 
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 06.30,,,Basic Yoga,,,,
-07.00,Body Combat,Hatha Yoga,,Body Pump,Pilates,,
-08.00,,,,,,Body Pump,Cardio boxing
+07.00,Pilates,Hatha Yoga,,Body Pump,Pilates,,
+08.00,,,,,,Body Pump,Bootcamp
 18.00,Zumba,Dance,Body Combat,Pilates,Body Combat,,
 19.00,Body Pump,Basic Yoga,Zumba,Bootcamp,Pound,,
 20.00,,Cardio dance,,,Vinyasa Yoga,,`,
@@ -25,10 +27,11 @@ const csvData = {
   Sedayu: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 08.00,Hatha Yoga,Body Combat,Vinyasa Yoga,Body Pump,Yoga Asanas,,
 09.00,,Body Language,Bolly X,Pound,Aerobic,,
-09.30,DanceArt,,,,,Booty & Abs,Bootcamp
+09.30,Step Aerobic,,,,,Booty & Abs,Bootcamp
 17.00,,,,,,Bootcamp,Fast Fit
 18.15,Kpop,,Latin Dance,,Zumba,,
-19.30,Step Aerobic,Matt Pilates,Step Aerobic,Cardio boxing,Body Pump,,`,
+19.15,,Matt Pilates,,Cardio boxing,,,
+19.30,Body Combat,,Step Aerobic,,Body Pump,,`,
 
   SunterMall: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 09.00,HIIT,,,,,,
