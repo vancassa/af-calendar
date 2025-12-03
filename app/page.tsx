@@ -8,21 +8,21 @@ import { Badge } from "@/components/ui/badge";
 const csvData = {
   MOI: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 07.30,,,,,,,BollyX
-08:00,,,,Body Combat,,,
+08.00,,,,Body Combat,,,
 08.30,,,Zumba,,,,
 09.00,PilatesX,,,,Yoga,,Body Jam
 09.30,,,,,,Body Combat,
 17.30,,,,,,,
 18.30,Dance Cardio,Pilates,Yoga,,Strong Nation,,
 19.00,,,,,,,
-19:15,,,,Body Combat,,,
+19.15,,,,Body Combat,,,
 19.30,Body Combat,Zumba,BollyX,,AF Ignite,,
-20:15,,,,BodyJam,,,`,
+20.15,,,,BodyJam,,,`,
 
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 07.00,Pilates,Hatha Yoga,Basic Yoga,Body Pump,Pilates,,
 08.00,,,,,,Body Pump,
-16:00,,,,,,,HIIT
+16.00,,,,,,,HIIT
 18.00,Zumba,Dance,Body Combat,Pilates,Belly Dance,,
 19.00,Body Pump,Basic Yoga,Zumba,Bootcamp,Pound,,
 20.00,,Cardio dance,,,Vinyasa Yoga,,`,
@@ -35,7 +35,7 @@ const csvData = {
 18.15,Kpop,Pound,Latin Dance,,Zumba,,
 19.15,,,,Cardio boxing,,,
 19.30,Body Combat,Body Pump,,,Body Pump,,
-20:00,,,Fun Step,,,,`,
+20.00,,,Fun Step,,,,`,
 };
 
 interface ClassActivity {
