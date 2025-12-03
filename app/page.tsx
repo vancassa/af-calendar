@@ -20,10 +20,9 @@ const csvData = {
 20:15,,,,BodyJam,,,`,
 
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
-06.30,,,Basic Yoga,,,,
-07.00,Pilates,Hatha Yoga,,Body Pump,Pilates,,
+07.00,Pilates,Hatha Yoga,Basic Yoga,Body Pump,Pilates,,
 08.00,,,,,,Body Pump,
-16:00,,,,,,Tabata,
+16:00,,,,,,,HIIT
 18.00,Zumba,Dance,Body Combat,Pilates,Belly Dance,,
 19.00,Body Pump,Basic Yoga,Zumba,Bootcamp,Pound,,
 20.00,,Cardio dance,,,Vinyasa Yoga,,`,
