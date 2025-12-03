@@ -28,13 +28,12 @@ const csvData = {
 20.00,,Cardio dance,,,Vinyasa Yoga,,`,
 
   Sedayu: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
-08.00,,Body Combat,Matt Pilates,Fun Step,Yoga Asanas,,
+08.00,,Body Combat,Matt Pilates,,Hatha yoga,,
 09.00,,,Bolly X,Body Language,Aerobic,,
-09.30,Salsation,Zumba,,,,Booty & Abs,Bootcamp
+09.30,,Zumba,,,,Fast Fit,Bootcamp
 17.00,,,,,,Bootcamp,Fast Fit
-18.15,Kpop,Pound,Latin Dance,,Zumba,,
-19.15,,,,Cardio boxing,,,
-19.30,Body Combat,Body Pump,,,Body Pump,,
+18.15,Kpop,,Ladies Style,,Zumba,,
+19.30,Body Combat,Body Pump,,Cardio boxing,Body Pump,,
 20.00,,,Fun Step,,,,`,
 };
 
