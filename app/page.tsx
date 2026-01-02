@@ -22,17 +22,17 @@ const csvData = {
   BellaTerra: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
 07.00,Pilates,Hatha Yoga,Basic Yoga,Body Pump,Pilates,,
 08.00,,,,,,Body Pump,
-16.00,,,,,,,HIIT
+16.00,,,,,,,Tabata
 18.00,Zumba,Dance,Body Combat,Pilates,Belly Dance,,
 19.00,Body Pump,Basic Yoga,Zumba,Bootcamp,Pound,,
 20.00,,Cardio dance,,,Vinyasa Yoga,,`,
 
   Sedayu: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
-08.00,,Body Combat,Matt Pilates,,Hatha yoga,,
-09.00,,,Bolly X,Body Language,Aerobic,,
+08.00,Body Pump,Barre Intensity,Matt Pilates,Body Combat,Hatha yoga,,
+09.00,Ladies Style,,Bolly X,Body Language,Aerobic,,
 09.30,,Zumba,,,,Fast Fit,Bootcamp
 17.00,,,,,,Bootcamp,Fast Fit
-18.15,Kpop,,Ladies Style,,Zumba,,
+18.15,Kpop,Booty & Abs,,Bootcamp,Zumba,,
 19.30,Body Combat,Body Pump,,Cardio boxing,Body Pump,,
 20.00,,,Fun Step,,,,`,
 };
