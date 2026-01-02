@@ -35,6 +35,13 @@ const csvData = {
 18.15,Kpop,Booty & Abs,,Bootcamp,Zumba,,
 19.30,Body Combat,Body Pump,,Cardio boxing,Body Pump,,
 20.00,,,Fun Step,,,,`,
+
+  SunterMall: `Time,Mon,Tue,Wed,Thurs,Fri,Sat,Sun
+09.00,HIIT,,,,,,
+10.00,Zumba,Body Combat,Bootcamp,Zumba,Body Pump,Body Pump,Dance Fitness
+18.00,Pound Fit,Aerobic,,Aerobic,,,
+19.05,Body Pump,Pilates,Body Combat,Dance Fitness,Yoga,Zumba,
+20.10,Yoga Stretch,Zumba,,Yoga,Body Combat,,`,
 };
 
 interface ClassActivity {
